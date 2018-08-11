@@ -116,3 +116,11 @@ function writeFinalMessage() {
         setTimeout(writeFinalMessage, 50);
     }
 }
+
+function checkForLetters(event) {
+    var symbol = String.fromCharCode(event.which);
+
+    if (!(/[A-Za-z]/.test(symbol))){
+        event.preventDefault();
+    }
+}

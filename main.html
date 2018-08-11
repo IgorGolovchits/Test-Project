@@ -6,8 +6,9 @@
     <script src="citiesJS.js"></script>
 </head>
 <body>
-    <h2>Enter the city:</h2>
-    <input id="city" type="text">
+    <form>
+        Enter the city: <input id="city" onkeypress="checkForLetters(event)">
+    </form>
 
     <h2>User's history</h2>
 
