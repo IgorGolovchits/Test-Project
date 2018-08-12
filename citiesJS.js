@@ -1,37 +1,39 @@
-var cities = ["Melbourne", "Sydney", "Perth", "Adelaide", "Canberra",
-              "Minsk", "Moscow", "Kiev", "Stockholm", "Oslo",
-              "Madrid", "Rome", "Milan", "Berlin", "Paris",
-              "Edinburgh", "Aberdeen", "Dublin", "York", "London",
-              "New York", "Washington", "Pittsburgh", "Detroit", "Ottawa"];
+'use strict';
 
-var usedVariants = [];
-var alarm = "";
-var firstEntry = 0;
-var lastTextBoxSymbol = "";
+const cities = ["Melbourne", "Sydney", "Perth", "Adelaide", "Canberra",
+                "Minsk", "Moscow", "Kiev", "Stockholm", "Oslo",
+                "Madrid", "Rome", "Milan", "Berlin", "Paris",
+                "Edinburgh", "Aberdeen", "Dublin", "York", "London",
+                "New York", "Washington", "Pittsburgh", "Detroit", "Ottawa"];
 
-const FINAL_MESSAGE = "Congratulation! Computer lost. You are the winner!";
+const usedVariants = [];
+let alarm = "";
+let letterIndex = 0;
+let firstEntry = 0;
+let lastTextBoxSymbol = "";
+
+const FINAL_MESSAGE = "Congratulation! Computer lost. It doesn't have any more variants. You are the winner!";
 
 function startTheGame(){
-    var textBoxCity = document.getElementById("city");
+    let textBoxCity = document.querySelector("input");
 
-    textBoxCity.addEventListener("keydown", function onEvent(event) {
+    textBoxCity.addEventListener("keydown", (event) => {
         if (event.key === "Enter") {
-            if (firstEntry === 0) {   //первый вход в игру. проверяется сначала последняя буква в текстбоксе и первая в массиве городов
-                if (checkForEmptyName(textBoxCity) === true) return;
+            if (firstEntry === 0) {
+                if (checkForEmptyName(textBoxCity)) return;
 
                 compareCities(textBoxCity);
-            } else { // второй и последующие входы проверяют на совпадение первую букву текстбокса и последнюю предыдущего слова
-                if (checkForEmptyName(textBoxCity) === true) return;
+            } else {
+                if (checkForEmptyName(textBoxCity)) return;
 
-                var firstTextBoxSymbol = textBoxCity.value.substring(0, 1);
+                let firstTextBoxSymbol = textBoxCity.value.substring(0, 1);
 
-                if (firstTextBoxSymbol.toUpperCase() === lastTextBoxSymbol.toUpperCase()) {
-                    compareCities(textBoxCity);
-                }
-                else {
+                if (firstTextBoxSymbol.toUpperCase() !== lastTextBoxSymbol.toUpperCase()) {
                     alert("The city's name must start with a(an) \"" + lastTextBoxSymbol.toUpperCase() + "\" character. " +
-                          "If you don't write it you will lose.");
+                        "If you don't write it you will lose.");
+                    return;
                 }
+                compareCities(textBoxCity);
             }
 
             firstEntry++;
@@ -40,42 +42,45 @@ function startTheGame(){
 }
 
 function compareCities(textBoxCity) {
-    var finish = false;
+    setCities(textBoxCity.value, "user");
 
-    setCities(textBoxCity.value, "user list");
+    for (let i = 0; i < cities.length; i++){
+        if (cities[i].toUpperCase() === textBoxCity.value.toUpperCase()){
+            cities.splice(i, 1);
+        }
+    }
 
-    if (checkAlarm() === true) return;
+    if (checkAlarm()) return;
 
     lastTextBoxSymbol = textBoxCity.value.slice(-1);
 
-    for (var i = 0; i <= cities.length; i++) {
+    for (let i = 0; i <= cities.length; i++) {
         if (i === cities.length){
-            finish = true;
+            writeFinalMessage();
+            textBoxCity.disabled = true;
+            textBoxCity.value = "The end of the game!";
+            textBoxCity.style.backgroundColor = '#DCDCDC';
         } else {
-            var firstCitiesSymbol = cities[i].substring(0, 1);
+            let firstCitiesSymbol = cities[i].substring(0, 1);
 
             if (lastTextBoxSymbol.toUpperCase() === firstCitiesSymbol.toUpperCase()) {
-                if (checkAlarm() === true) return;
+                if (checkAlarm()) return;
 
                 textBoxCity.value = cities[i];
                 cities.splice(i, 1);
 
-                setCities(textBoxCity.value, "computer list");
+                setCities(textBoxCity.value, "computer");
+                if (checkAlarm()) return;
 
                 lastTextBoxSymbol = textBoxCity.value.slice(-1);
                 break;
             }
         }
     }
-
-    if (finish === true){
-        writeFinalMessage();
-        textBoxCity.disabled = true;
-    }
 }
 
 function setCities(city, idName) {
-    for (var i = 0; i < usedVariants.length; i++){
+    for (let i = 0; i < usedVariants.length; i++){
         if (city.toUpperCase() === usedVariants[i].toUpperCase()){
             alarm = "This city has already been used! Please enter another variant. If you don't you will lose.";
             alert(alarm);
@@ -85,9 +90,9 @@ function setCities(city, idName) {
 
     usedVariants.push(city);
 
-    var list = document.getElementById(idName);
-    var node = document.createElement("li");
-    var content = document.createTextNode(city);
+    let list = document.querySelector("#" + idName);
+    let node = document.createElement("li");
+    let content = document.createTextNode(city);
 
     node.appendChild(content);
     list.appendChild(node);
@@ -101,26 +106,24 @@ function checkForEmptyName(textBoxCity) {
 }
 
 function checkAlarm() {
-    if (alarm !== ""){
+    if (alarm){
         alarm = "";
         return true;
     }
 }
 
-var letterIndex = 0;
-
 function writeFinalMessage() {
     if (letterIndex < FINAL_MESSAGE.length) {
-        document.getElementById("winner").innerHTML += FINAL_MESSAGE.charAt(letterIndex);
+        document.querySelector("#winner").innerHTML += FINAL_MESSAGE.charAt(letterIndex);
         letterIndex++;
         setTimeout(writeFinalMessage, 50);
     }
 }
 
 function checkForLetters(event) {
-    var symbol = String.fromCharCode(event.which);
+    let symbol = String.fromCharCode(event.which);
 
-    if (!(/[A-Za-z]/.test(symbol))){
+    if (!(/[A-Za-z ]/.test(symbol))){
         event.preventDefault();
     }
 }

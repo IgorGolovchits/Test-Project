@@ -2,25 +2,32 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Cities</title>
+    <title>The game "Cities"</title>
+    <link rel="stylesheet" href="decor.css">
     <script src="citiesJS.js"></script>
+    <script src="https://cdn.polyfill.io/v2/polyfill.min.js"></script>
 </head>
 <body>
-    <form>
-        Enter the city: <input id="city" onkeypress="checkForLetters(event)">
-    </form>
+    <div align="center" class="form_div">
+        <form>
+            <input id="city" class="input_field" placeholder="Enter the city (in English)" align="center" onkeypress="checkForLetters(event)">
+        </form>
+    </div>
 
-    <h2>User's history</h2>
+    <div class="row variants">
+        <div class="column">
+            <h3>User's history</h3>
+            <ol id="user">
+            </ol>
+        </div>
 
-    <ol id="user list">
-    </ol>
-
-    <h2>Computer's history</h2>
-
-    <ol id="computer list">
-    </ol>
-
-    <p id="winner"></p>
+        <div class="column">
+            <h3>Computer's history</h3>
+            <ol id="computer">
+            </ol>
+            <p id="winner"></p>
+        </div>
+    </div>
     <script>startTheGame()</script>
 </body>
 </html>
